@@ -1,73 +1,104 @@
-# React + TypeScript + Vite
+# BlinkAI Agent
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+BlinkAI is a compact AI agent chat interface built with React, TypeScript, Vite, LangChain, and Gemini 2.5 Flash. The app opens from a pixel flower launch screen, shows a short loading spinner, then presents a minimal dark chat interface backed by a local LangChain agent server.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Pixel flower launch screen with `blinkAI` branding
+- Compact dark chat UI
+- Loading spinner before opening chat
+- Gemini 2.5 Flash responses through LangChain
+- Server-side API key usage
+- Local tool-using agent backend
+- Vite dev proxy from the frontend to the agent server
 
-## React Compiler
+## Agent Tools
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The LangChain agent currently includes:
 
-## Expanding the ESLint configuration
+- `calculator`: evaluates basic arithmetic expressions
+- `current_datetime`: returns the current date and time
+- `make_brief_plan`: creates short practical plans for tasks or goals
+- `text_stats`: counts words, characters, and lines
+- `wikipedia_lookup`: searches Wikipedia and returns a short summary with a source URL
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- React 19
+- TypeScript
+- Vite
+- LangChain JS
+- Gemini 2.5 Flash
+- Express
+- Wikipedia API
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Setup
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Install dependencies:
+
+```powershell
+npm.cmd install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Create a local `.env` file:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+AGENT_PORT=8787
 ```
+
+The `.env` file is ignored by Git. Do not commit real API keys.
+
+## Run Locally
+
+Start the LangChain agent server:
+
+```powershell
+npm.cmd run agent
+```
+
+In a second terminal, start the Vite app:
+
+```powershell
+npm.cmd run dev
+```
+
+Open:
+
+```text
+http://127.0.0.1:5173/
+```
+
+## Scripts
+
+```powershell
+npm.cmd run dev      # Start frontend
+npm.cmd run agent    # Start LangChain agent backend
+npm.cmd run build    # Type-check and build production files
+npm.cmd run lint     # Run ESLint
+npm.cmd run preview  # Preview production build
+```
+
+## API
+
+The frontend sends chat requests to:
+
+```text
+POST /api/chat
+```
+
+During development, Vite proxies `/api` requests to:
+
+```text
+http://127.0.0.1:8787
+```
+
+Health check:
+
+```text
+GET /api/health
+```
+
+## Notes
+
+This app keeps Gemini calls on the local backend so the API key is not exposed through Vite client-side environment variables. For production deployment, host the Express agent server securely and set `GEMINI_API_KEY` in the server environment.
